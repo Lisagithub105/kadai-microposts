@@ -11,7 +11,7 @@ class MicropostsController extends Controller
         $data = [];
         if (\Auth::check()) { //認証積みの場合
             // 認証済のユーザを取得
-            $user = \Auther::user();
+            $user = \Auth::user();
             // ユーザの投稿の一覧を作成日時の降順で取得
             // （後のチャプターで他ユーザの投稿も取得するように変更しますが、現時点ではこのユーザの投稿のみ取得します。）
             $microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(10);
@@ -47,7 +47,7 @@ class MicropostsController extends Controller
         // 認証済ユーザ（閲覧者）がその投稿の所有者である場合は、投稿を削除
         if (\Auth::id() === $micropost->user_id)
         {
-            $micropost->$delate();
+            $micropost->delete();
         }
         // 前のURLへリダイレクトさせる
         return back();
