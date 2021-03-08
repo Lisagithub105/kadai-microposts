@@ -24,7 +24,7 @@ class CreateUserFavoriteTable extends Migration
             $table->foreign('favorite_id')->references('id')->on('users')->onDelete('cascade');
             
             // user_idとfavorite_idの組み合わせの重複を許さない
-            $table->unique(['user_id', 'facorite_id']); 
+            $table->unique(['user_id', 'favorite_id']); 
         });
     }
 
