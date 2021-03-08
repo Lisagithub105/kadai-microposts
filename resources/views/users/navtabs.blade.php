@@ -9,14 +9,14 @@
     {{-- フォロワー一覧タブ --}}
     <li class="nav-item">
         <a href="{{ route('users.followings', ['id' => $user->id]) }}" class="nav-link {{ Request::routeIs('users.followings')? 'active' : '' }}">
-           TimeLine
+           Followings
            <span class="badge badge-secondary">{{ $user->followings_count}}</span>
         </a>
     </li>
     {{--  --}}
     <li class="nav-item">
         <a href="{{ route('users.followers', ['id' => $user->id]) }}" class="nav-link {{ Request::routeIs('users.followers')? 'active' : '' }}">
-           TimeLine
+           Followers
            <span class="badge badge-secondary">{{ $user->followers_count}}</span>
         </a>
     </li>

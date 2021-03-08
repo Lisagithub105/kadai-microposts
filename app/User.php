@@ -87,7 +87,7 @@ class User extends Authenticatable
           // 対象が自分自身かどうかの確認
           $its_me = $this->id == $userId;
           
-          if($exit || $its_me) {
+          if ($exist || $its_me) {
               // すでにフォローしていれば何もしない
               return false;
           } else {
@@ -129,4 +129,17 @@ class User extends Authenticatable
             // フォロー中ユーザの中に$userIdのものが存在するのか
             return $this->followings()->where('follow_id', $userId)->exists();
         }
+        
+        /**
+         * このユーザとフォロー中ユーザの投稿に絞りこむ
+         */
+         public function feed_microposts()
+         {
+             // このユーザがフォロー中のユーザのidを取得して配列にする
+             $userIds = $this->followings()->pluck('users.id')->toArray();
+             // このユーザのidもその配列に追加
+             $userIds[] = $this->id;
+             // それらのユーザが所有する投稿に絞り込む
+             return Micropost::whereIn('user_id', $userIds);
+         }
 }
