@@ -42,7 +42,7 @@ class User extends Authenticatable
       */
      public function loadRelationshipCounts()
          {
-             $this->loadCount(['microposts', 'followings', 'followers']);
+             $this->loadCount(['microposts', 'followings', 'followers', 'favorites']);
          }
     
     
@@ -141,5 +141,65 @@ class User extends Authenticatable
              $userIds[] = $this->id;
              // それらのユーザが所有する投稿に絞り込む
              return Micropost::whereIn('user_id', $userIds);
+         }
+         
+         /**
+          * 課題で追加（お気に入り登録）
+          */
+         
+         /**
+          * お気に入りに登録する。
+          */
+         public function favorites()
+         {
+             return $this->belongsToMany(Micropost::class, 'user_favorite', 'user_id', 'micropost_id')->withTimestamps();
+         }
+         
+         /**
+         * $userIdで指定された投稿をフォローする。
+         *
+         * @param  int  $userId
+         * @return bool
+         */
+         public function is_favorite($micropostId)
+    {
+        return $this->favorites()->where('micropost_id',$micropostId)->exists();
+    }
+         public function favorite($micropostId)
+         {
+             // すでにお気に入り登録をしているかの確認
+             $exist = $this->is_favorite($micropostId);
+             // 対象が自分自身かどうかの確認
+             // $its_me = $this->id == $userId;
+             
+             if ($exist) {
+                 // すでにお気に入り登録されていたら、何もしない。
+                 return false;
+             } else {
+                 // 未お気に入り登録であれば、登録する
+                 $this->favorites()->attach($micropostId);
+                 return true;
+             }
+         }
+         
+         /**
+         * $userIdで指定された投稿をアンフォローする。
+         * @return bool
+         */
+         public function unfavorite($micropostId)
+         {
+             // すでにお気に入り登録しているかの確認
+             $exist = $this->is_favorite($micropostId);
+             // 対象が自分自身かどうかの確認
+             // $its_me = $this->id == $userId;
+             
+             if ($exist) {
+                 // すでに登録していれば登録から外す
+                 $this->favorites()->detach($micropostId);
+                 return true;
+             } else {
+                 // 未登録済であればなにもしない
+                 return false;
+             }
          }
 }
